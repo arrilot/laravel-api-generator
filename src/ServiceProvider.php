@@ -22,14 +22,12 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 //        $this->app->singleton('command.api.make', function ($app) {
 //            return new ApiMakeCommand($app['files']);
 //        });
-
-        $this->commands('command.api.make');
+//
+//        $this->commands('command.api.make');
     }
 
     /**
      * Bootstrap the application events.
-     *
-     * @return void
      */
     public function boot()
     {
@@ -37,6 +35,6 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             __DIR__.'/config/config.php' => config_path('laravel-api-generator.php'),
         ]);
 
-        include app_path(config('routes_file'));
+        require base_path(config('laravel-api-generator.routes_file'));
     }
 }

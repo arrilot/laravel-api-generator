@@ -41,17 +41,40 @@ abstract class BaseController extends LaravelController
     protected $transformer;
 
     /**
-     * Create fractal manager instance.
-     * Called in child constructor.
+     * Do we need to unguard the model before create/update?
+     *
+     * @var boolean
      */
-    protected function prepareFractalAndValidator()
+    protected $unguard = false;
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
     {
+        $this->model = $this->model();
+        $this->transformer = $this->transformer();
         $this->fractal = new Manager;
+
         if (Input::has('include'))
         {
             $this->fractal->parseIncludes(camel_case(Input::get('include')));
         }
     }
+
+    /**
+     * Eloquent model.
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    abstract protected function model();
+
+    /**
+     * Transformer for the current model.
+     *
+     * @return \League\Fractal\TransformerAbstract
+     */
+    abstract protected function transformer();
 
     /**
      * Getter for statusCode.
@@ -283,13 +306,9 @@ abstract class BaseController extends LaravelController
             return $this->errorWrongArgs('Validation failed');
         }
 
-        $this->model->unguard();
+        $this->unguardIfNeeded();
 
         $item = $this->model->create($data);
-        if (!$item)
-        {
-            return $this->errorNotFound();
-        }
 
         return $this->respondWithItem($item, $this->transformer);
     }
@@ -307,7 +326,6 @@ abstract class BaseController extends LaravelController
         $with = $this->getEagerLoad();
 
         $item = $this->findItem($id, $with);
-
         if (!$item)
         {
             return $this->errorNotFound();
@@ -334,9 +352,7 @@ abstract class BaseController extends LaravelController
             return $this->errorWrongArgs('Empty data');
         }
 
-
         $item = $this->findItem($id);
-
         if (!$item)
         {
             return $this->errorNotFound();
@@ -348,7 +364,8 @@ abstract class BaseController extends LaravelController
             return $this->errorWrongArgs('Validation failed');
         }
 
-        $this->model->unguard();
+        $this->unguardIfNeeded();
+
         $item->fill($data);
         $item->save();
 
@@ -413,7 +430,7 @@ abstract class BaseController extends LaravelController
     }
 
     /**
-     * Get the item according to mode.
+     * Get item according to mode.
      *
      * @param $id
      * @param array $with
@@ -430,4 +447,14 @@ abstract class BaseController extends LaravelController
         return $this->model->with($with)->find($id);
     }
 
+    /**
+     * Unguard eloquent model if needed.
+     */
+    protected function unguardIfNeeded()
+    {
+        if ($this->unguard)
+        {
+            $this->model->unguard();
+        }
+    }
 }
