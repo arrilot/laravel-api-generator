@@ -1,8 +1,8 @@
 <?php
 
-namespace Arrilot\Api;
+namespace Arrilot\Api\Skeleton;
 
-use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Routing\Controller as LaravelController;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
@@ -10,7 +10,7 @@ use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
 
-abstract class ApiController extends BaseController
+abstract class BaseController extends LaravelController
 {
     /**
      * HTTP header status code.
@@ -111,24 +111,6 @@ abstract class ApiController extends BaseController
         return $this->respondWithArray($rootScope->toArray());
     }
 
-    /**
-     * Prepare root scope and adds meta.
-     *
-     * @param Item $resource
-     * @return mixed
-     */
-    protected function prepareRootScope($resource)
-    {
-        $availableIncludes = $resource->getTransformer()->getAvailableIncludes();
-        $resource->setMetaValue('available_includes', $availableIncludes);
-
-        $defaultIncludes = $resource->getTransformer()->getDefaultIncludes();
-        $resource->setMetaValue('default_includes', $defaultIncludes);
-
-        $rootScope = $this->fractal->createData($resource);
-
-        return $rootScope;
-    }
 
     /**
      * Respond with a given array of items.
@@ -158,6 +140,23 @@ abstract class ApiController extends BaseController
                 'message'   => $message,
             ]
         ]);
+    }
+
+    /**
+     * Prepare root scope and adds meta.
+     *
+     * @param Item $resource
+     * @return mixed
+     */
+    protected function prepareRootScope($resource)
+    {
+        $availableIncludes = $resource->getTransformer()->getAvailableIncludes();
+        $resource->setMetaValue('available_includes', $availableIncludes);
+
+        $defaultIncludes = $resource->getTransformer()->getDefaultIncludes();
+        $resource->setMetaValue('default_includes', $defaultIncludes);
+
+        return $this->fractal->createData($resource);
     }
 
     /**
@@ -255,7 +254,7 @@ abstract class ApiController extends BaseController
 
     /**
      * Display a listing of the resource.
-     * GET /api/"resource"
+     * GET /api/{resource}
      *
      * @return Response
      */
@@ -269,7 +268,7 @@ abstract class ApiController extends BaseController
 
     /**
      * Store a newly created resource in storage.
-     * POST /api/"resource"
+     * POST /api/{resource}
      *
      * @return Response
      */
@@ -297,7 +296,7 @@ abstract class ApiController extends BaseController
 
     /**
      * Display the specified resource.
-     * GET /api/"resource"/{id}
+     * GET /api/{resource}/{id}
      *
      * @param  int $id
      *
@@ -319,7 +318,7 @@ abstract class ApiController extends BaseController
 
     /**
      * Update the specified resource in storage.
-     * PUT /api/"resource"/{id}
+     * PUT /api/{resource}/{id}
      *
      * @param  int $id
      *
@@ -358,7 +357,7 @@ abstract class ApiController extends BaseController
 
     /**
      * Remove the specified resource from storage.
-     * DELETE /api/"resource"/{id}
+     * DELETE /api/{resource}/{id}
      *
      * @param  int $id
      *
@@ -372,6 +371,7 @@ abstract class ApiController extends BaseController
         {
             return $this->errorNotFound();
         }
+
         $item->delete();
 
         return Response::json(['message' => 'Deleted']);
@@ -424,7 +424,7 @@ abstract class ApiController extends BaseController
     {
         if (Input::has('use_as_id'))
         {
-            return $this->model->with($with)->findByAnotherField(Input::get('use_as_id'), $id)->first();
+            return $this->model->with($with)->where(Input::get('use_as_id'), '=', $id)->first();
         }
 
         return $this->model->with($with)->find($id);
