@@ -128,7 +128,7 @@ class ApiMakeCommand extends Command
     {
         $this->stubVariables['controllerName'] = $this->stubVariables['modelName'].'Controller';
         $this->stubVariables['controllerName'] = $this->stubVariables['modelName'].'Controller';
-        $this->stubVariables['controllerNamespace'] = $this->appNamespace.$this->convertSlashes(config('laravel-api-generator.controllers_path'));
+        $this->stubVariables['controllerNamespace'] = $this->appNamespace.$this->convertSlashes(config('laravel-api-generator.controllers_dir'));
         $this->stubVariables['controllerFullName'] = trim($this->stubVariables['controllerNamespace'].'\\'.$this->stubVariables['controllerName'], '\\');
 
         return $this;
@@ -158,7 +158,7 @@ class ApiMakeCommand extends Command
     protected function setTransformerData()
     {
         $this->stubVariables['transformerName'] = $this->stubVariables['modelName'].'Transformer';
-        $this->stubVariables['transformerNamespace'] = $this->appNamespace.$this->convertSlashes(config('laravel-api-generator.transformers_path'));
+        $this->stubVariables['transformerNamespace'] = $this->appNamespace.$this->convertSlashes(config('laravel-api-generator.transformers_dir'));
         $this->stubVariables['transformerFullName'] = trim($this->stubVariables['transformerNamespace'].'\\'.$this->stubVariables['transformerName'], '\\');
 
         return $this;
@@ -191,14 +191,14 @@ class ApiMakeCommand extends Command
 
         // read file
         $lines = file($routesFile);
-        $lastLine = $lines[count($lines) - 1];
+        $lastLine = trim($lines[count($lines) - 1]);
 
         // modify file
         if (strcmp($lastLine, '});') === 0) {
             $lines[count($lines) - 1] = '    '.$stub;
-            $lines[] = "\r\n});";
+            $lines[] = "\r\n});\r\n";
         } else {
-            $lines[] = "\r\n".$stub;
+            $lines[] = "$stub\r\n";
         }
 
         // save file

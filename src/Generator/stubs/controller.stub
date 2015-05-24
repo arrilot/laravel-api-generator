@@ -24,4 +24,5 @@ class {{controllerName}} extends Controller
     {
         return new {{transformerName}};
     }
+
 }
