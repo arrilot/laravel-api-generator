@@ -6,7 +6,6 @@ use Arrilot\Api\Generator\ApiMakeCommand;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
-
     /**
      * Register the service provider.
      *

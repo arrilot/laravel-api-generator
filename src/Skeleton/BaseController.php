@@ -43,7 +43,7 @@ abstract class BaseController extends LaravelController
     /**
      * Do we need to unguard the model before create/update?
      *
-     * @var boolean
+     * @var bool
      */
     protected $unguard = false;
 
@@ -54,10 +54,9 @@ abstract class BaseController extends LaravelController
     {
         $this->model = $this->model();
         $this->transformer = $this->transformer();
-        $this->fractal = new Manager;
+        $this->fractal = new Manager();
 
-        if (Input::has('include'))
-        {
+        if (Input::has('include')) {
             $this->fractal->parseIncludes(camel_case(Input::get('include')));
         }
     }
@@ -134,7 +133,6 @@ abstract class BaseController extends LaravelController
         return $this->respondWithArray($rootScope->toArray());
     }
 
-
     /**
      * Respond with a given array of items.
      *
@@ -161,7 +159,7 @@ abstract class BaseController extends LaravelController
             'error' => [
                 'http_code' => $this->statusCode,
                 'message'   => $message,
-            ]
+            ],
         ]);
     }
 
@@ -169,6 +167,7 @@ abstract class BaseController extends LaravelController
      * Prepare root scope and adds meta.
      *
      * @param Item $resource
+     *
      * @return mixed
      */
     protected function prepareRootScope($resource)
@@ -196,6 +195,7 @@ abstract class BaseController extends LaravelController
      * Get the validation rules for update.
      *
      * @param $id
+     *
      * @return array
      */
     protected function rulesForUpdate($id)
@@ -208,7 +208,7 @@ abstract class BaseController extends LaravelController
      *
      * @param $message
      *
-     * @return  Response
+     * @return Response
      */
     public function errorForbidden($message = 'Forbidden')
     {
@@ -220,7 +220,7 @@ abstract class BaseController extends LaravelController
      *
      * @param $message
      *
-     * @return  Response
+     * @return Response
      */
     public function errorInternalError($message = 'Internal Error')
     {
@@ -232,7 +232,7 @@ abstract class BaseController extends LaravelController
      *
      * @param $message
      *
-     * @return  Response
+     * @return Response
      */
     public function errorNotFound($message = 'Resource Not Found')
     {
@@ -244,7 +244,7 @@ abstract class BaseController extends LaravelController
      *
      * @param $message
      *
-     * @return  Response
+     * @return Response
      */
     public function errorUnauthorized($message = 'Unauthorized')
     {
@@ -256,7 +256,7 @@ abstract class BaseController extends LaravelController
      *
      * @param $message
      *
-     * @return  Response
+     * @return Response
      */
     public function errorWrongArgs($message = 'Wrong Arguments')
     {
@@ -268,7 +268,7 @@ abstract class BaseController extends LaravelController
      *
      * @param $message
      *
-     * @return  Response
+     * @return Response
      */
     public function errorNotImplemented($message = 'Not implemented')
     {
@@ -277,13 +277,13 @@ abstract class BaseController extends LaravelController
 
     /**
      * Display a listing of the resource.
-     * GET /api/{resource}
+     * GET /api/{resource}.
      *
      * @return Response
      */
     public function index()
     {
-        $with  = $this->getEagerLoad();
+        $with = $this->getEagerLoad();
         $items = $this->model->with($with)->get();
 
         return $this->respondWithCollection($items, $this->transformer);
@@ -291,18 +291,17 @@ abstract class BaseController extends LaravelController
 
     /**
      * Store a newly created resource in storage.
-     * POST /api/{resource}
+     * POST /api/{resource}.
      *
      * @return Response
      */
     public function store()
     {
         $input = Input::json();
-        $data  = $input->get('data');
+        $data = $input->get('data');
 
         $v = Validator::make($data, $this->rulesForCreate());
-        if ($v->fails())
-        {
+        if ($v->fails()) {
             return $this->errorWrongArgs('Validation failed');
         }
 
@@ -315,9 +314,9 @@ abstract class BaseController extends LaravelController
 
     /**
      * Display the specified resource.
-     * GET /api/{resource}/{id}
+     * GET /api/{resource}/{id}.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return Response
      */
@@ -326,8 +325,7 @@ abstract class BaseController extends LaravelController
         $with = $this->getEagerLoad();
 
         $item = $this->findItem($id, $with);
-        if (!$item)
-        {
+        if (!$item) {
             return $this->errorNotFound();
         }
 
@@ -336,31 +334,28 @@ abstract class BaseController extends LaravelController
 
     /**
      * Update the specified resource in storage.
-     * PUT /api/{resource}/{id}
+     * PUT /api/{resource}/{id}.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return Response
      */
     public function update($id)
     {
         $input = Input::json();
-        $data  = $input->get('data');
+        $data = $input->get('data');
 
-        if (!$data)
-        {
+        if (!$data) {
             return $this->errorWrongArgs('Empty data');
         }
 
         $item = $this->findItem($id);
-        if (!$item)
-        {
+        if (!$item) {
             return $this->errorNotFound();
         }
 
         $v = Validator::make($data, $this->rulesForUpdate($item->id));
-        if ($v->fails())
-        {
+        if ($v->fails()) {
             return $this->errorWrongArgs('Validation failed');
         }
 
@@ -374,9 +369,9 @@ abstract class BaseController extends LaravelController
 
     /**
      * Remove the specified resource from storage.
-     * DELETE /api/{resource}/{id}
+     * DELETE /api/{resource}/{id}.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return Response
      */
@@ -384,8 +379,7 @@ abstract class BaseController extends LaravelController
     {
         $item = $this->findItem($id);
 
-        if (!$item)
-        {
+        if (!$item) {
             return $this->errorNotFound();
         }
 
@@ -407,7 +401,8 @@ abstract class BaseController extends LaravelController
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
+     * @param int $id
+     *
      * @return Response
      */
     public function edit($id)
@@ -422,7 +417,7 @@ abstract class BaseController extends LaravelController
      */
     protected function getEagerLoad()
     {
-        $include  = camel_case(Input::get('include', ''));
+        $include = camel_case(Input::get('include', ''));
         $includes = explode(',', $include);
         $includes = array_filter($includes);
 
@@ -439,8 +434,7 @@ abstract class BaseController extends LaravelController
      */
     protected function findItem($id, array $with = [])
     {
-        if (Input::has('use_as_id'))
-        {
+        if (Input::has('use_as_id')) {
             return $this->model->with($with)->where(Input::get('use_as_id'), '=', $id)->first();
         }
 
@@ -452,8 +446,7 @@ abstract class BaseController extends LaravelController
      */
     protected function unguardIfNeeded()
     {
-        if ($this->unguard)
-        {
+        if ($this->unguard) {
             $this->model->unguard();
         }
     }

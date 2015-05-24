@@ -51,7 +51,7 @@ class ApiMakeCommand extends Command
     /**
      * Create a new controller creator command instance.
      *
-     * @param  \Illuminate\Filesystem\Filesystem  $files
+     * @param \Illuminate\Filesystem\Filesystem $files
      */
     public function __construct(Filesystem $files)
     {
@@ -102,8 +102,7 @@ class ApiMakeCommand extends Command
      */
     protected function setModelData($name)
     {
-        if (str_contains($name, '/'))
-        {
+        if (str_contains($name, '/')) {
             $name = $this->convertSlashes($name);
         }
 
@@ -135,10 +134,9 @@ class ApiMakeCommand extends Command
         return $this;
     }
 
-
     /**
      * Set route data for a given model.
-     * "Profile\Payer" -> "profile_payers"
+     * "Profile\Payer" -> "profile_payers".
      *
      * @return $this
      */
@@ -193,11 +191,11 @@ class ApiMakeCommand extends Command
 
         // read file
         $lines = file($routesFile);
-        $lastLine = $lines[count($lines)-1];
+        $lastLine = $lines[count($lines) - 1];
 
         // modify file
-        if (strcmp($lastLine, "});") === 0) {
-            $lines[count($lines)-1] = "    ".$stub;
+        if (strcmp($lastLine, '});') === 0) {
+            $lines[count($lines) - 1] = '    '.$stub;
             $lines[] = "\r\n});";
         } else {
             $lines[] = "\r\n".$stub;
@@ -215,6 +213,7 @@ class ApiMakeCommand extends Command
      * Create class with a given type.
      *
      * @param $type
+     *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function createClass($type)
@@ -222,6 +221,7 @@ class ApiMakeCommand extends Command
         $path = $this->getPath($this->stubVariables[$type.'FullName']);
         if ($this->files->exists($path)) {
             $this->error(ucfirst($type).' already exists!');
+
             return;
         }
 
@@ -235,7 +235,8 @@ class ApiMakeCommand extends Command
     /**
      * Get the destination file path.
      *
-     * @param  string  $name
+     * @param string $name
+     *
      * @return string
      */
     protected function getPath($name)
@@ -248,22 +249,23 @@ class ApiMakeCommand extends Command
     /**
      * Build the directory for the class if needed.
      *
-     * @param  string  $path
+     * @param string $path
+     *
      * @return string
      */
     protected function makeDirectoryIfNeeded($path)
     {
-        if ( ! $this->files->isDirectory(dirname($path)))
-        {
+        if (!$this->files->isDirectory(dirname($path))) {
             $this->files->makeDirectory(dirname($path), 0777, true, true);
         }
     }
 
     /**
      * Get stub content and replace all stub placeholders
-     * with data from $this->stubData
+     * with data from $this->stubData.
      *
-     * @param  string $path
+     * @param string $path
+     *
      * @return string
      */
     protected function constructStub($path)
@@ -293,6 +295,7 @@ class ApiMakeCommand extends Command
      * Convert "/" to "\".
      *
      * @param $string
+     *
      * @return string
      */
     protected function convertSlashes($string)
