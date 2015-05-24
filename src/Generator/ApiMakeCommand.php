@@ -69,11 +69,11 @@ class ApiMakeCommand extends Command
     {
         $this->prepareVariablesForStubs($this->argument('name'));
 
-        //create controller
+        $this->createController();
 
-        //create transformer
+        $this->createTransformer();
 
-        //create routes
+        $this->addRoutes();
     }
 
     /**
@@ -91,10 +91,8 @@ class ApiMakeCommand extends Command
 
         $this->setModelData($name)
             ->setControllerData()
-            ->setTransformerData()
-            ->setEndpoint();
-
-        var_dump($this->stubVariables);
+            ->setRouteData()
+            ->setTransformerData();
     }
 
     /**
@@ -125,13 +123,31 @@ class ApiMakeCommand extends Command
     /**
      * Set the controller name and namespace.
      *
-     * @return string
+     * @return $this
      */
     protected function setControllerData()
     {
-//        $this->stubVariables['transformerName'] = $this->stubVariables['modelName'].'Transformer';
-//        $this->stubVariables['transformerNamespace'] = $this->appNamespace.$this->convertSlashes(config('laravel-api-generator.transformers_path'));
-//        $this->stubVariables['transformerFullName'] = trim($this->stubVariables['transformerNamespace'].'\\'.$this->stubVariables['transformerName'], '\\');
+        $this->stubVariables['controllerName'] = $this->stubVariables['modelName'].'Controller';
+        $this->stubVariables['controllerName'] = $this->stubVariables['modelName'].'Controller';
+        $this->stubVariables['controllerNamespace'] = $this->appNamespace.$this->convertSlashes(config('laravel-api-generator.controllers_path'));
+        $this->stubVariables['controllerFullName'] = trim($this->stubVariables['controllerNamespace'].'\\'.$this->stubVariables['controllerName'], '\\');
+
+        return $this;
+    }
+
+
+    /**
+     * Set route data for a given model.
+     * "Profile\Payer" -> "profile_payers"
+     *
+     * @return $this
+     */
+    protected function setRouteData()
+    {
+        $name = str_replace('\\', '', $this->stubVariables['modelFullNameWithoutRoot']);
+        $name = snake_case($name);
+
+        $this->stubVariables['routeName'] = str_plural($name);
 
         return $this;
     }
@@ -139,7 +155,7 @@ class ApiMakeCommand extends Command
     /**
      * Set the transformer name and namespace.
      *
-     * @return string
+     * @return $this
      */
     protected function setTransformerData()
     {
@@ -151,19 +167,114 @@ class ApiMakeCommand extends Command
     }
 
     /**
-     * Set endpoint for a given model.
-     * "Profile\Payer" -> "profile_payers"
+     *  Create controller class file from a stub.
+     */
+    protected function createController()
+    {
+        $this->createClass('controller');
+    }
+
+    /**
+     *  Create controller class file from a stub.
+     */
+    protected function createTransformer()
+    {
+        $this->createClass('transformer');
+    }
+
+    /**
+     *  Add routes to routes file.
+     */
+    protected function addRoutes()
+    {
+        $stub = $this->constructStub(base_path(config('laravel-api-generator.route_stub')));
+
+        $routesFile = app_path(config('laravel-api-generator.routes_file'));
+
+        // read file
+        $lines = file($routesFile);
+        $lastLine = $lines[count($lines)-1];
+
+        // modify file
+        if (strcmp($lastLine, "});") === 0) {
+            $lines[count($lines)-1] = "    ".$stub;
+            $lines[] = "\r\n});";
+        } else {
+            $lines[] = "\r\n".$stub;
+        }
+
+        // save file
+        $fp = fopen($routesFile, 'w');
+        fwrite($fp, implode('', $lines));
+        fclose($fp);
+
+        $this->info('Routes added successfully.');
+    }
+
+    /**
+     * Create class with a given type.
      *
+     * @param $type
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
+    protected function createClass($type)
+    {
+        $path = $this->getPath($this->stubVariables[$type.'FullName']);
+        if ($this->files->exists($path)) {
+            $this->error(ucfirst($type).' already exists!');
+            return;
+        }
+
+        $this->makeDirectoryIfNeeded($path);
+
+        $this->files->put($path, $this->constructStub(base_path(config('laravel-api-generator.'.$type.'_stub'))));
+
+        $this->info(ucfirst($type).' created successfully.');
+    }
+
+    /**
+     * Get the destination file path.
+     *
+     * @param  string  $name
      * @return string
      */
-    protected function setEndpoint()
+    protected function getPath($name)
     {
-        $endpoint = str_replace('\\', '', $this->stubVariables['modelFullNameWithoutRoot']);
-        $endpoint = snake_case($endpoint);
+        $name = str_replace($this->appNamespace, '', $name);
 
-        $this->stubVariables['endpoint'] = str_plural($endpoint);
+        return $this->laravel['path'].'/'.str_replace('\\', '/', $name).'.php';
+    }
 
-        return $this;
+    /**
+     * Build the directory for the class if needed.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    protected function makeDirectoryIfNeeded($path)
+    {
+        if ( ! $this->files->isDirectory(dirname($path)))
+        {
+            $this->files->makeDirectory(dirname($path), 0777, true, true);
+        }
+    }
+
+    /**
+     * Get stub content and replace all stub placeholders
+     * with data from $this->stubData
+     *
+     * @param  string $path
+     * @return string
+     */
+    protected function constructStub($path)
+    {
+        $stub = $this->files->get($path);
+
+        foreach ($this->stubVariables as $var => $value) {
+            $stub = str_replace('{{'.$var.'}}', $value, $stub);
+        }
+
+        return $stub;
     }
 
     /**
@@ -182,12 +293,10 @@ class ApiMakeCommand extends Command
      * Convert "/" to "\".
      *
      * @param $string
-     *
      * @return string
      */
     protected function convertSlashes($string)
     {
         return str_replace('/', '\\', $string);
-
     }
 }

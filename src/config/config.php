@@ -1,11 +1,12 @@
 <?php
 
 return [
-    'routes_file' => 'Api/routes.php',
     'controllers_path' => 'Api/Controllers',
     'transformers_path' => 'Api/Transformers',
-    'controller_stub' => 'vendor/arrilot/laravel-api-generator/src/Generator/controller.stub',
-    'transformer_stub' => 'vendor/arrilot/laravel-api-generator/src/Generator/transformer.stub',
-    'route_stub' => 'vendor/arrilot/laravel-api-generator/src/Generator/route.stub',
-    'models_base_dir' => 'Models'
+    'routes_file' => 'Api/routes.php',
+    'models_base_dir' => 'Models',
+
+    'controller_stub' => 'vendor/arrilot/laravel-api-generator/src/Generator/stubs/controller.stub',
+    'route_stub' => 'vendor/arrilot/laravel-api-generator/src/Generator/stubs/route.stub',
+    'transformer_stub' => 'vendor/arrilot/laravel-api-generator/src/Generator/stubs/transformer.stub',
 ];
