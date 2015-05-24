@@ -89,6 +89,7 @@ abstract class BaseController extends LaravelController
      * Setter for statusCode.
      *
      * @param int $statusCode Value to set
+     *
      * @return self
      */
     public function setStatusCode($statusCode)
@@ -103,6 +104,7 @@ abstract class BaseController extends LaravelController
      *
      * @param $item
      * @param $callback
+     *
      * @return mixed
      */
     protected function respondWithItem($item, $callback)
@@ -119,6 +121,7 @@ abstract class BaseController extends LaravelController
      *
      * @param $collection
      * @param $callback
+     *
      * @return mixed
      */
     protected function respondWithCollection($collection, $callback)
@@ -135,6 +138,7 @@ abstract class BaseController extends LaravelController
      *
      * @param array $array
      * @param array $headers
+     *
      * @return mixed
      */
     protected function respondWithArray(array $array, array $headers = [])
@@ -146,6 +150,7 @@ abstract class BaseController extends LaravelController
      * Response with the current error.
      *
      * @param $message
+     *
      * @return mixed
      */
     protected function respondWithError($message)
@@ -162,6 +167,7 @@ abstract class BaseController extends LaravelController
      * Prepare root scope and adds meta.
      *
      * @param Item $resource
+     *
      * @return mixed
      */
     protected function prepareRootScope($resource)
@@ -189,6 +195,7 @@ abstract class BaseController extends LaravelController
      * Get the validation rules for update.
      *
      * @param $id
+     *
      * @return array
      */
     protected function rulesForUpdate($id)
@@ -212,6 +219,7 @@ abstract class BaseController extends LaravelController
      * Generate a Response with a 500 HTTP header and a given message.
      *
      * @param $message
+     *
      * @return Response
      */
     public function errorInternalError($message = 'Internal Error')
@@ -235,6 +243,7 @@ abstract class BaseController extends LaravelController
      * Generate a Response with a 401 HTTP header and a given message.
      *
      * @param $message
+     *
      * @return Response
      */
     public function errorUnauthorized($message = 'Unauthorized')
@@ -246,6 +255,7 @@ abstract class BaseController extends LaravelController
      * Generate a Response with a 400 HTTP header and a given message.
      *
      * @param $message
+     *
      * @return Response
      */
     public function errorWrongArgs($message = 'Wrong Arguments')
@@ -307,6 +317,7 @@ abstract class BaseController extends LaravelController
      * GET /api/{resource}/{id}.
      *
      * @param int $id
+     *
      * @return Response
      */
     public function show($id)
@@ -326,6 +337,7 @@ abstract class BaseController extends LaravelController
      * PUT /api/{resource}/{id}.
      *
      * @param int $id
+     *
      * @return Response
      */
     public function update($id)
@@ -360,6 +372,7 @@ abstract class BaseController extends LaravelController
      * DELETE /api/{resource}/{id}.
      *
      * @param int $id
+     *
      * @return Response
      */
     public function destroy($id)
