@@ -78,7 +78,7 @@ abstract class BaseController extends LaravelController
     /**
      * Getter for statusCode.
      *
-     * @return mixed
+     * @return integer
      */
     public function getStatusCode()
     {
@@ -103,7 +103,7 @@ abstract class BaseController extends LaravelController
      * Respond with a given item.
      *
      * @param $item
-     * @param $callback
+     * @param \League\Fractal\TransformerAbstract $callback
      *
      * @return mixed
      */
@@ -120,7 +120,7 @@ abstract class BaseController extends LaravelController
      * Respond with a given collection.
      *
      * @param $collection
-     * @param $callback
+     * @param \League\Fractal\TransformerAbstract $callback
      *
      * @return mixed
      */
@@ -149,7 +149,7 @@ abstract class BaseController extends LaravelController
     /**
      * Response with the current error.
      *
-     * @param $message
+     * @param string $message
      *
      * @return mixed
      */
@@ -166,17 +166,14 @@ abstract class BaseController extends LaravelController
     /**
      * Prepare root scope and adds meta.
      *
-     * @param Item $resource
+     * @param Item|Collection $resource
      *
-     * @return mixed
+     * @return \League\Fractal\Scope
      */
     protected function prepareRootScope($resource)
     {
-        $availableIncludes = $resource->getTransformer()->getAvailableIncludes();
-        $resource->setMetaValue('available_includes', $availableIncludes);
-
-        $defaultIncludes = $resource->getTransformer()->getDefaultIncludes();
-        $resource->setMetaValue('default_includes', $defaultIncludes);
+        $resource->setMetaValue('available_includes', $this->transformer->getAvailableIncludes());
+        $resource->setMetaValue('default_includes', $this->transformer->getDefaultIncludes());
 
         return $this->fractal->createData($resource);
     }
@@ -194,7 +191,7 @@ abstract class BaseController extends LaravelController
     /**
      * Get the validation rules for update.
      *
-     * @param $id
+     * @param integer $id
      *
      * @return array
      */
@@ -218,7 +215,7 @@ abstract class BaseController extends LaravelController
     /**
      * Generate a Response with a 500 HTTP header and a given message.
      *
-     * @param $message
+     * @param string $message
      *
      * @return Response
      */
@@ -230,7 +227,7 @@ abstract class BaseController extends LaravelController
     /**
      * Generate a Response with a 404 HTTP header and a given message.
      *
-     * @param $message
+     * @param string $message
      *
      * @return Response
      */
@@ -242,7 +239,7 @@ abstract class BaseController extends LaravelController
     /**
      * Generate a Response with a 401 HTTP header and a given message.
      *
-     * @param $message
+     * @param string $message
      *
      * @return Response
      */
@@ -254,7 +251,7 @@ abstract class BaseController extends LaravelController
     /**
      * Generate a Response with a 400 HTTP header and a given message.
      *
-     * @param $message
+     * @param string$message
      *
      * @return Response
      */
@@ -266,7 +263,7 @@ abstract class BaseController extends LaravelController
     /**
      * Generate a Response with a 501 HTTP header and a given message.
      *
-     * @param $message
+     * @param string $message
      *
      * @return Response
      */
@@ -427,7 +424,7 @@ abstract class BaseController extends LaravelController
     /**
      * Get item according to mode.
      *
-     * @param $id
+     * @param integer $id
      * @param array $with
      *
      * @return mixed
