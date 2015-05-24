@@ -6,7 +6,8 @@ use League\Fractal\TransformerAbstract;
 class UserTransformer extends TransformerAbstract
 {
     /**
-     * Turn this item object into a generic array
+     * Turn this item object into a generic array.
+     *
      * @param $item
      * @return array
      */
@@ -14,7 +15,6 @@ class UserTransformer extends TransformerAbstract
     {
         return [
             'id'                      => (int)$item->id,
-            'email'                   => (string)$item->email,
             'created_at'              => (string)$item->created_at,
             'updated_at'              => (string)$item->updated_at,
         ];

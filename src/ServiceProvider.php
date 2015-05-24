@@ -2,11 +2,10 @@
 
 namespace Arrilot\Api;
 
-use Illuminate\Console\AppNamespaceDetectorTrait;
+use Arrilot\Api\Generator\ApiMakeCommand;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
-    use AppNamespaceDetectorTrait;
 
     /**
      * Register the service provider.
@@ -18,12 +17,12 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->mergeConfigFrom(
             __DIR__.'/config/config.php', 'laravel-api-generator'
         );
-//
-//        $this->app->singleton('command.api.make', function ($app) {
-//            return new ApiMakeCommand($app['files']);
-//        });
-//
-//        $this->commands('command.api.make');
+
+        $this->app->singleton('command.api.make', function ($app) {
+            return new ApiMakeCommand($app['files']);
+        });
+
+        $this->commands('command.api.make');
     }
 
     /**
@@ -35,6 +34,6 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             __DIR__.'/config/config.php' => config_path('laravel-api-generator.php'),
         ]);
 
-        require base_path(config('laravel-api-generator.routes_file'));
+        require app_path(config('laravel-api-generator.routes_file'));
     }
 }
