@@ -53,6 +53,7 @@ To achieve that you need to do lots of boilerplate operations - create controlle
 Route::group(['prefix' => 'api/v1', 'namespace' => 'App\Api\Controllers'], function () {
     //
 });
+
 ```
 
 Feel free to change it if you like.
@@ -66,6 +67,7 @@ Route::group(['prefix' => 'api/v1', 'namespace' => 'App\Api\Controllers'], funct
     //
     Route::resource('users', 'UserController');
 });
+
 ```
 
 As you can see it's smart enough to detect some route groups and treat this situation properly.
@@ -99,8 +101,8 @@ class UserController extends Controller
     {
         return new UserTransformer;
     }
-
 }
+
 ```
 You can customize this stub as much as you want.
 
@@ -129,6 +131,7 @@ class UserTransformer extends TransformerAbstract
         ];
     }
 }
+
 ```
 
 This stub is customizable too.
