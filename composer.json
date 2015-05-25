@@ -1,8 +1,8 @@
 {
     "name": "arrilot/laravel-api-generator",
-    "description": "",
+    "description": "Laravel api console generator utilizing Fractal package. Includes basic API skeleton too.",
     "license": "MIT",
-    "keywords": [],
+    "keywords": ["rest", "api", "fractal", "generator"],
     "authors": [
         {
             "name": "Nekrasov Ilya",
@@ -13,7 +13,7 @@
     "require": {
         "php": ">=5.4.0",
         "illuminate/support": "5.*",
-        "league/fractal": "0.12.*"
+        "league/fractal": "0.*"
     },
     "autoload": {
         "psr-4": {
