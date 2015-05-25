@@ -146,6 +146,8 @@ This skeleton is not a silver bullet but in many cases it can be either exactly 
 
 You can always check Arrilot\Api\Skeleton\BaseController to see what else it can provide.
 
+If you don't like the Skeleton just stop inheriting it in the base controller `Api\Controllers\Controller`, overwrite the controller stub in your config to remove  `model()` and `transformer()` methods and you are done.
+
 
 ### Configuration
 
