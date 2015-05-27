@@ -1,6 +1,6 @@
 {
     "name": "arrilot/laravel-api-generator",
-    "description": "Laravel api console generator utilizing Fractal package. Includes optional basic api skeleton too.",
+    "description": "Two simple tools for building REST APIs with fractal: console generator and API skeleton",
     "license": "MIT",
     "keywords": ["rest", "api", "fractal", "generator"],
     "authors": [
