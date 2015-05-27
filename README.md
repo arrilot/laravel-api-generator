@@ -4,7 +4,7 @@
 
 #Laravel Api Generator
 
-*Laravel api console generator utilizing Fractal package. Includes optional basic api skeleton too.*
+*Two simple tools for building REST APIs with fractal: console generator and API skeleton*
 
 ## Introduction
 
