@@ -78,7 +78,7 @@ abstract class BaseController extends LaravelController
     /**
      * Getter for statusCode.
      *
-     * @return integer
+     * @return int
      */
     public function getStatusCode()
     {
@@ -191,7 +191,7 @@ abstract class BaseController extends LaravelController
     /**
      * Get the validation rules for update.
      *
-     * @param integer $id
+     * @param int $id
      *
      * @return array
      */
@@ -424,7 +424,7 @@ abstract class BaseController extends LaravelController
     /**
      * Get item according to mode.
      *
-     * @param integer $id
+     * @param int   $id
      * @param array $with
      *
      * @return mixed

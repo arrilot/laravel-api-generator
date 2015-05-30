@@ -38,11 +38,11 @@ class ApiMakeCommand extends Command
      * @var array
      */
     protected $stubVariables = [
-        'app' => [],
-        'model' => [],
-        'controller' => [],
+        'app'         => [],
+        'model'       => [],
+        'controller'  => [],
         'transformer' => [],
-        'route' => [],
+        'route'       => [],
     ];
 
     protected $modelsBaseNamespace;
@@ -92,7 +92,6 @@ class ApiMakeCommand extends Command
             ->setControllerData()
             ->setRouteData()
             ->setTransformerData();
-        //var_dump($this->stubVariables);die();
     }
 
     /**
@@ -160,6 +159,9 @@ class ApiMakeCommand extends Command
 
     /**
      *  Set entity's names and namespaces.
+     *
+     * @param string $entity
+     * @return $this
      */
     protected function setDataForEntity($entity)
     {
@@ -167,7 +169,7 @@ class ApiMakeCommand extends Command
 
         $this->stubVariables[$entity]['namespaceWithoutRoot'] = implode('\\', array_filter([
             $this->convertSlashes(config("laravel-api-generator.{$entity}s_dir")),
-            $this->stubVariables['model']['additionalNamespace']
+            $this->stubVariables['model']['additionalNamespace'],
         ]));
 
         $this->stubVariables[$entity]['namespace'] = $this->stubVariables['app']['namespace'].$this->stubVariables[$entity]['namespaceWithoutRoot'];
