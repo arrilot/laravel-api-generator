@@ -33,18 +33,17 @@ class ApiMakeCommand extends Command
     protected $description = 'Create api controller, transformer and api routes for a given model (arrilot/laravel-api-generator)';
 
     /**
-     * The application namespace.
-     *
-     * @var string
-     */
-    protected $appNamespace;
-
-    /**
      * The array of variables available in stubs.
      *
      * @var array
      */
-    protected $stubVariables = [];
+    protected $stubVariables = [
+        'app' => [],
+        'model' => [],
+        'controller' => [],
+        'transformer' => [],
+        'route' => [],
+    ];
 
     protected $modelsBaseNamespace;
 
@@ -83,7 +82,7 @@ class ApiMakeCommand extends Command
      */
     protected function prepareVariablesForStubs($name)
     {
-        $this->appNamespace = $this->getAppNamespace();
+        $this->stubVariables['app']['namespace'] = $this->getAppNamespace();
 
         $baseDir = config('laravel-api-generator.models_base_dir');
 
@@ -93,6 +92,7 @@ class ApiMakeCommand extends Command
             ->setControllerData()
             ->setRouteData()
             ->setTransformerData();
+        //var_dump($this->stubVariables);die();
     }
 
     /**
@@ -108,30 +108,28 @@ class ApiMakeCommand extends Command
 
         $name = trim($name, '\\');
 
-        $this->stubVariables['modelFullNameWithoutRoot'] = $name;
-        $this->stubVariables['modelFullName'] = $this->appNamespace.$this->modelsBaseNamespace.$name;
+        $this->stubVariables['model']['fullNameWithoutRoot'] = $name;
+        $this->stubVariables['model']['fullName'] = $this->stubVariables['app']['namespace'].$this->modelsBaseNamespace.$name;
 
-        $exploded = explode('\\', $this->stubVariables['modelFullName']);
+        $exploded = explode('\\', $this->stubVariables['model']['fullName']);
+        $this->stubVariables['model']['name'] = array_pop($exploded);
+        $this->stubVariables['model']['namespace'] = implode('\\', $exploded);
 
-        $this->stubVariables['modelName'] = array_pop($exploded);
-        $this->stubVariables['modelNamespace'] = implode('\\', $exploded);
+        $exploded = explode('\\', $this->stubVariables['model']['fullNameWithoutRoot']);
+        array_pop($exploded);
+        $this->stubVariables['model']['additionalNamespace'] = implode('\\', $exploded);
 
         return $this;
     }
 
     /**
-     * Set the controller name and namespace.
+     * Set the controller names and namespaces.
      *
      * @return $this
      */
     protected function setControllerData()
     {
-        $this->stubVariables['controllerName'] = $this->stubVariables['modelName'].'Controller';
-        $this->stubVariables['controllerName'] = $this->stubVariables['modelName'].'Controller';
-        $this->stubVariables['controllerNamespace'] = $this->appNamespace.$this->convertSlashes(config('laravel-api-generator.controllers_dir'));
-        $this->stubVariables['controllerFullName'] = trim($this->stubVariables['controllerNamespace'].'\\'.$this->stubVariables['controllerName'], '\\');
-
-        return $this;
+        return $this->setDataForEntity('controller');
     }
 
     /**
@@ -142,24 +140,41 @@ class ApiMakeCommand extends Command
      */
     protected function setRouteData()
     {
-        $name = str_replace('\\', '', $this->stubVariables['modelFullNameWithoutRoot']);
+        $name = str_replace('\\', '', $this->stubVariables['model']['fullNameWithoutRoot']);
         $name = snake_case($name);
 
-        $this->stubVariables['routeName'] = str_plural($name);
+        $this->stubVariables['route']['name'] = str_plural($name);
 
         return $this;
     }
 
     /**
-     * Set the transformer name and namespace.
+     * Set the transformer names and namespaces.
      *
      * @return $this
      */
     protected function setTransformerData()
     {
-        $this->stubVariables['transformerName'] = $this->stubVariables['modelName'].'Transformer';
-        $this->stubVariables['transformerNamespace'] = $this->appNamespace.$this->convertSlashes(config('laravel-api-generator.transformers_dir'));
-        $this->stubVariables['transformerFullName'] = trim($this->stubVariables['transformerNamespace'].'\\'.$this->stubVariables['transformerName'], '\\');
+        return $this->setDataForEntity('transformer');
+    }
+
+    /**
+     *  Set entity's names and namespaces.
+     */
+    protected function setDataForEntity($entity)
+    {
+        $this->stubVariables[$entity]['name'] = $this->stubVariables['model']['name'].ucfirst($entity);
+
+        $this->stubVariables[$entity]['namespaceWithoutRoot'] = implode('\\', array_filter([
+            $this->convertSlashes(config("laravel-api-generator.{$entity}s_dir")),
+            $this->stubVariables['model']['additionalNamespace']
+        ]));
+
+        $this->stubVariables[$entity]['namespace'] = $this->stubVariables['app']['namespace'].$this->stubVariables[$entity]['namespaceWithoutRoot'];
+
+        $this->stubVariables[$entity]['fullNameWithoutRoot'] = $this->stubVariables[$entity]['namespaceWithoutRoot'].'\\'.$this->stubVariables[$entity]['name'];
+
+        $this->stubVariables[$entity]['fullName'] = $this->stubVariables[$entity]['namespace'].'\\'.$this->stubVariables[$entity]['name'];
 
         return $this;
     }
@@ -218,7 +233,7 @@ class ApiMakeCommand extends Command
      */
     protected function createClass($type)
     {
-        $path = $this->getPath($this->stubVariables[$type.'FullName']);
+        $path = $this->getPath($this->stubVariables[$type]['fullNameWithoutRoot']);
         if ($this->files->exists($path)) {
             $this->error(ucfirst($type).' already exists!');
 
@@ -241,7 +256,7 @@ class ApiMakeCommand extends Command
      */
     protected function getPath($name)
     {
-        $name = str_replace($this->appNamespace, '', $name);
+        $name = str_replace($this->stubVariables['app']['namespace'], '', $name);
 
         return $this->laravel['path'].'/'.str_replace('\\', '/', $name).'.php';
     }
@@ -272,8 +287,10 @@ class ApiMakeCommand extends Command
     {
         $stub = $this->files->get($path);
 
-        foreach ($this->stubVariables as $var => $value) {
-            $stub = str_replace('{{'.$var.'}}', $value, $stub);
+        foreach ($this->stubVariables as $entity => $fields) {
+            foreach ($fields as $field => $value) {
+                $stub = str_replace("{{{$entity}.{$field}}}", $value, $stub);
+            }
         }
 
         return $stub;

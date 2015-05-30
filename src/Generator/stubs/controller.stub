@@ -1,9 +1,10 @@
-<?php namespace {{controllerNamespace}};
+<?php namespace {{controller.namespace}};
 
-use {{modelFullName}};
-use {{transformerFullName}};
+use {{app.namespace}}Http\Controllers\Controller;
+use {{model.fullName}};
+use {{transformer.fullName}};
 
-class {{controllerName}} extends Controller
+class {{controller.name}} extends Controller
 {
     /**
      * Eloquent model.
@@ -12,7 +13,7 @@ class {{controllerName}} extends Controller
      */
     protected function model()
     {
-        return new {{modelName}};
+        return new {{model.name}};
     }
 
     /**
@@ -22,6 +23,6 @@ class {{controllerName}} extends Controller
      */
     protected function transformer()
     {
-        return new {{transformerName}};
+        return new {{transformer.name}};
     }
 }
