@@ -9,8 +9,10 @@
 ## Introduction
 
 This package provides two features
-1) Console generator which creates Controller, Fractal Transformer and routes in a single command.
-2) Basic rest api skeleton that can be really helpful if you need something standard. It's 100% optional.
+
+1. Console generator which creates Controller, Fractal Transformer and routes in a single command.
+
+2. Basic REST API skeleton that can be really helpful if you need something standard. It's 100% optional.
 
 If you do not use Fractal for your transformation layer, this package is probably not the right choice for you.
 
@@ -58,7 +60,7 @@ Route::group(['prefix' => 'api/v1', 'namespace' => 'App\Api\Controllers'], funct
 
 Feel free to change it if you like.
 
-The generator adds ```php Route::resource('users', 'UserController');``` to the end of this file.
+The generator adds ```Route::resource('users', 'UserController');``` to the end of this file.
 
 ```php
 <?php
@@ -139,7 +141,7 @@ This stub is customizable too.
 ### Skeleton
 
 You may have noticed that controller which has been just generated has two public methods - `model()` and `transformer()`
-That's because this two methods are the only thing that you need in your controller to set up a rest api from a skeleton.
+That's because those two methods are the only thing that you need in your controller to set up a rest api from the Skeleton.
 
 You can use a bunch of rest routes like `GET api/v1/users`, `GET api/v1/users/{id}`, `PUT api/v1/users/` etc out of the box.
 They receive and respond with json in the same format, support includes and eager load.
