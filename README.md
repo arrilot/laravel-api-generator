@@ -33,7 +33,7 @@ If you do not use Fractal for your transformation layer, this package is probabl
 ```
 
 3) Copy basic folder structure to app/Api ```cp -R vendor/arrilot/laravel-api-generator/templates/Api app/Api```
-You can use different paths if you do not like it.
+You can use different paths if you do not like this one.
 
 
 ## Usage
