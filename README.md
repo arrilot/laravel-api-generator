@@ -18,7 +18,7 @@ If you do not use Fractal for your transformation layer, this package is probabl
 
 ## Installation
 
-1 Run ```composer require arrilot/laravel-api-generator```
+1) Run ```composer require arrilot/laravel-api-generator```
 
 2) Register a service provider in the `app.php` configuration file
 
@@ -32,8 +32,8 @@ If you do not use Fractal for your transformation layer, this package is probabl
 ?>
 ```
 
-3) Copy basic folder structure to app/Api ```cp -R vendor/arrilot/laravel-api-generator/templates/Api app/Api```
-You can use different paths if you do not like this one.
+3) Copy basic folder structure to app/Api ```cp -R vendor/arrilot/laravel-api-generator/templates/Api app/Api``` and check what you got there.
+If you need you can use different paths later.
 
 
 ## Usage
