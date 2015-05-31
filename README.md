@@ -140,18 +140,26 @@ This stub is customizable too.
 
 ### Skeleton
 
-You may have noticed that controller which has been just generated has two public methods - `model()` and `transformer()`
-That's because those two methods are the only thing that you need in your controller to set up a rest api from the Skeleton.
+You may have noticed that controller which has just been generated includes two public methods - `model()` and `transformer()`
+That's because those methods are the only thing that you need in your controller to set up a basic REST API if you use the Skeleton.
 
-You can use a bunch of rest routes like `GET api/v1/users`, `GET api/v1/users/{id}`, `PUT api/v1/users/` etc out of the box.
-They receive and respond with json in the same format, support includes and eager load.
-You can overwrite `rulesForCreate` and `rulesForUpdate` in your controller to set up the needed validation rules.
+The list of routes that are available out of the box:
+
+1. `GET api/v1/users`
+2. `GET api/v1/users/{id}`,
+3. `POST  api/v1/users`
+4. `PUT api/v1/users/{id}`
+5. `DELETE  api/v1/users/{id}`
+
+Request and respone format is json
+Fractal includes are supported via $_GET['include'].
+Validation rules for create and update can be set by overwriting `rulesForCreate` and `rulesForUpdate` in your controller.
 
 This skeleton is not a silver bullet but in many cases it can be either exactly what you need or can be used as a decent starting point for your api.
 
-You can always check Arrilot\Api\Skeleton\BaseController to see what else it can provide.
+You can check https://github.com/Arrilot/laravel-api-generator/blob/master/src/Skeleton/BaseController.php for more info.
 
-If you don't like the Skeleton just stop inheriting it in the base controller `Api\Controllers\Controller`, overwrite the controller stub in your config to remove  `model()` and `transformer()` methods and you are done.
+If you don't like the Skeleton just stop inheriting it in the base controller -  `Api\Controllers\Controller` and overwrite the controller stub in your config to remove  `model()` and `transformer()` methods.
 
 
 ### Configuration
