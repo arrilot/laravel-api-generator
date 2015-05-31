@@ -161,16 +161,20 @@ class ApiMakeCommand extends Command
      *  Set entity's names and namespaces.
      *
      * @param string $entity
+     *
      * @return $this
      */
     protected function setDataForEntity($entity)
     {
+        $entityNamespace = $this->convertSlashes(config("laravel-api-generator.{$entity}s_dir"));
         $this->stubVariables[$entity]['name'] = $this->stubVariables['model']['name'].ucfirst($entity);
 
         $this->stubVariables[$entity]['namespaceWithoutRoot'] = implode('\\', array_filter([
-            $this->convertSlashes(config("laravel-api-generator.{$entity}s_dir")),
+            $entityNamespace,
             $this->stubVariables['model']['additionalNamespace'],
         ]));
+
+        $this->stubVariables[$entity]['namespaceBase'] = $this->stubVariables['app']['namespace'].$entityNamespace;
 
         $this->stubVariables[$entity]['namespace'] = $this->stubVariables['app']['namespace'].$this->stubVariables[$entity]['namespaceWithoutRoot'];
 

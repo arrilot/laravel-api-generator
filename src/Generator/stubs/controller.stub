@@ -1,6 +1,6 @@
 <?php namespace {{controller.namespace}};
 
-use {{app.namespace}}Http\Controllers\Controller;
+use {{controller.namespaceBase}}\Controller;
 use {{model.fullName}};
 use {{transformer.fullName}};
 
