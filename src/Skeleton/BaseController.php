@@ -4,7 +4,6 @@ namespace Arrilot\Api\Skeleton;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as LaravelController;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use League\Fractal\Manager;
@@ -118,7 +117,7 @@ abstract class BaseController extends LaravelController
             ? $this->model->with($with)->skip($skip)->limit($limit)->get()
             : $this->model->with($with)->get();
 
-        return $this->respondWithCollection($items, $this->transformer, $skip, $limit);
+        return $this->respondWithCollection($items, $skip, $limit);
     }
 
     /**
@@ -134,16 +133,16 @@ abstract class BaseController extends LaravelController
             return $this->errorWrongArgs('Empty data');
         }
 
-        $v = Validator::make($data, $this->rulesForCreate());
-        if ($v->fails()) {
-            return $this->errorWrongArgs('Validation failed');
+        $validator = Validator::make($data, $this->rulesForCreate());
+        if ($validator->fails()) {
+            return $this->errorWrongArgs($validator->messages());
         }
 
         $this->unguardIfNeeded();
 
         $item = $this->model->create($data);
 
-        return $this->respondWithItem($item, $this->transformer);
+        return $this->respondWithItem($item);
     }
 
     /**
@@ -163,7 +162,7 @@ abstract class BaseController extends LaravelController
             return $this->errorNotFound();
         }
 
-        return $this->respondWithItem($item, $this->transformer);
+        return $this->respondWithItem($item);
     }
 
     /**
@@ -186,9 +185,9 @@ abstract class BaseController extends LaravelController
             return $this->errorNotFound();
         }
 
-        $v = Validator::make($data, $this->rulesForUpdate($item->id));
-        if ($v->fails()) {
-            return $this->errorWrongArgs('Validation failed');
+        $validator = Validator::make($data, $this->rulesForUpdate($item->id));
+        if ($validator->fails()) {
+            return $this->errorWrongArgs($validator->messages());
         }
 
         $this->unguardIfNeeded();
@@ -196,7 +195,7 @@ abstract class BaseController extends LaravelController
         $item->fill($data);
         $item->save();
 
-        return $this->respondWithItem($item, $this->transformer);
+        return $this->respondWithItem($item);
     }
 
     /**
@@ -270,13 +269,12 @@ abstract class BaseController extends LaravelController
      * Respond with a given item.
      *
      * @param $item
-     * @param $callback
      *
      * @return mixed
      */
-    protected function respondWithItem($item, $callback)
+    protected function respondWithItem($item)
     {
-        $resource = new Item($item, $callback);
+        $resource = new Item($item, $this->transformer);
 
         $rootScope = $this->prepareRootScope($resource);
 
@@ -287,15 +285,14 @@ abstract class BaseController extends LaravelController
      * Respond with a given collection.
      *
      * @param $collection
-     * @param $callback
      * @param int $skip
      * @param int $limit
      *
      * @return mixed
      */
-    protected function respondWithCollection($collection, $callback, $skip = 0, $limit = 0)
+    protected function respondWithCollection($collection, $skip = 0, $limit = 0)
     {
-        $resource = new Collection($collection, $callback);
+        $resource = new Collection($collection, $this->transformer);
 
         if ($limit) {
             $cursor = new Cursor($skip, $skip + $limit, $collection->count());
@@ -338,7 +335,7 @@ abstract class BaseController extends LaravelController
     }
 
     /**
-     * Prepare root scope and adds meta.
+     * Prepare root scope and set some meta information.
      *
      * @param Item|Collection $resource
      *
