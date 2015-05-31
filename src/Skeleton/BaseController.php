@@ -43,7 +43,7 @@ abstract class BaseController extends LaravelController
     protected $transformer;
 
     /**
-     * Illuminate\Http\Request instance
+     * Illuminate\Http\Request instance.
      *
      * @var Request
      */
@@ -65,7 +65,7 @@ abstract class BaseController extends LaravelController
     protected $defaultLimit = false;
 
     /**
-     * Maximum limit that can be set via $_GET['limit']
+     * Maximum limit that can be set via $_GET['limit'].
      *
      * @var int|bool
      */
@@ -73,6 +73,7 @@ abstract class BaseController extends LaravelController
 
     /**
      * Constructor.
+     *
      * @param Request $request
      */
     public function __construct(Request $request)
@@ -110,7 +111,7 @@ abstract class BaseController extends LaravelController
     public function index()
     {
         $with = $this->getEagerLoad();
-        $skip = (int)$this->request->input('skip', 0);
+        $skip = (int) $this->request->input('skip', 0);
         $limit = $this->calculateLimit();
 
         $items = $limit
@@ -493,7 +494,7 @@ abstract class BaseController extends LaravelController
      */
     protected function calculateLimit()
     {
-        $limit = (int)$this->request->input('limit', $this->defaultLimit);
+        $limit = (int) $this->request->input('limit', $this->defaultLimit);
 
         return ($this->maximumLimit && $this->maximumLimit < $limit) ? $this->maximumLimit : $limit;
     }
