@@ -139,7 +139,7 @@ This stub is customizable too.
 ### Skeleton
 
 You may have noticed that controller which has been just generated has two public methods - `model()` and `transformer()`
-That's because this two methods are the only thing that you need in your controller to set up a rest api from a skeleton.
+That's because those two methods are the only thing that you need in your controller to set up a rest api from a skeleton.
 
 You can use a bunch of rest routes like `GET api/v1/users`, `GET api/v1/users/{id}`, `PUT api/v1/users/` etc out of the box.
 They receive and respond with json in the same format, support includes and eager load.
