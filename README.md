@@ -58,7 +58,7 @@ Route::group(['prefix' => 'api/v1', 'namespace' => 'App\Api\Controllers'], funct
 
 Feel free to change it if you like.
 
-The generator adds ```php Route::resource('users', 'UserController');``` to the end of this file.
+The generator adds ```Route::resource('users', 'UserController');``` to the end of this file.
 
 ```php
 <?php
