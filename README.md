@@ -146,7 +146,7 @@ That's because those methods are the only thing that you need in your controller
 The list of routes that are available out of the box:
 
 1. `GET api/v1/users`
-2. `GET api/v1/users/{id}`,
+2. `GET api/v1/users/{id}`
 3. `POST  api/v1/users`
 4. `PUT api/v1/users/{id}`
 5. `DELETE  api/v1/users/{id}`
