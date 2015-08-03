@@ -8,10 +8,11 @@ use League\Fractal\Serializer\JsonApiSerializer;
 class Serializer extends JsonApiSerializer
 {
     /**
-     * Serialize the included data
+     * Serialize the included data.
      *
      * @param \League\Fractal\Resource\ResourceInterface $resource
      * @param array $data
+     *
      * @return array
      */
     public function includedData(ResourceInterface $resource, array $data)

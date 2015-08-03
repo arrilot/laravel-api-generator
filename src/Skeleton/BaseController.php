@@ -110,7 +110,6 @@ abstract class BaseController extends LaravelController
      */
     abstract protected function transformer();
 
-
     /**
      * Serializer for the current model.
      *
