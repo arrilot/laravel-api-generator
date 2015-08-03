@@ -71,6 +71,13 @@ abstract class BaseController extends LaravelController
     protected $maximumLimit = false;
 
     /**
+     * Resource key.
+     *
+     * @var string
+     */
+    protected $resourceKey = null;
+
+    /**
      * Constructor.
      *
      * @param Request $request
@@ -81,6 +88,8 @@ abstract class BaseController extends LaravelController
         $this->transformer = $this->transformer();
         $this->fractal = new Manager();
         $this->request = $request;
+
+        $this->fractal->setSerializer($this->serializer());
 
         if ($this->request->has('include')) {
             $this->fractal->parseIncludes(camel_case($this->request->input('include')));
@@ -100,6 +109,17 @@ abstract class BaseController extends LaravelController
      * @return \League\Fractal\TransformerAbstract
      */
     abstract protected function transformer();
+
+
+    /**
+     * Serializer for the current model.
+     *
+     * @return \League\Fractal\Serializer\SerializerAbstract
+     */
+    protected function serializer()
+    {
+        return new Serializer();
+    }
 
     /**
      * Display a listing of the resource.
@@ -274,7 +294,7 @@ abstract class BaseController extends LaravelController
      */
     protected function respondWithItem($item)
     {
-        $resource = new Item($item, $this->transformer);
+        $resource = new Item($item, $this->transformer, $this->resourceKey);
 
         $rootScope = $this->prepareRootScope($resource);
 
@@ -292,7 +312,7 @@ abstract class BaseController extends LaravelController
      */
     protected function respondWithCollection($collection, $skip = 0, $limit = 0)
     {
-        $resource = new Collection($collection, $this->transformer);
+        $resource = new Collection($collection, $this->transformer, $this->resourceKey);
 
         if ($limit) {
             $cursor = new Cursor($skip, $skip + $limit, $collection->count());
