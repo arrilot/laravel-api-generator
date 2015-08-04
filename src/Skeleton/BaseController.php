@@ -147,7 +147,10 @@ abstract class BaseController extends LaravelController
      */
     public function store()
     {
-        $data = $this->request->json()->get('data');
+        $key = empty($this->resourceKey) ? 'data' : str_singular($this->resourceKey);
+
+        $data = $this->request->json()->get($key);
+
         if (!$data) {
             return $this->errorWrongArgs('Empty data');
         }
@@ -194,7 +197,10 @@ abstract class BaseController extends LaravelController
      */
     public function update($id)
     {
-        $data = $this->request->json()->get('data');
+        $key = empty($this->resourceKey) ? 'data' : str_singular($this->resourceKey);
+
+        $data = $this->request->json()->get($key);
+
         if (!$data) {
             return $this->errorWrongArgs('Empty data');
         }
