@@ -128,6 +128,8 @@ abstract class BaseController extends LaravelController
      */
     public function index()
     {
+        $this->resourceKey = empty($this->resourceKey) ? 'data' : str_plural($this->resourceKey);
+
         $with = $this->getEagerLoad();
         $skip = (int) $this->request->input('skip', 0);
         $limit = $this->calculateLimit();
