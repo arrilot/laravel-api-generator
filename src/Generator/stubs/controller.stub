@@ -7,6 +7,13 @@ use {{transformer.fullName}};
 class {{controller.name}} extends Controller
 {
     /**
+     * Resource key.
+     *
+     * @var string
+     */
+    protected $resourceKey = null;
+
+    /**
      * Eloquent model.
      *
      * @return \Illuminate\Database\Eloquent\Model

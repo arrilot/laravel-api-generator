@@ -119,6 +119,13 @@ use League\Fractal\TransformerAbstract;
 class UserTransformer extends TransformerAbstract
 {
     /**
+     * Resource key.
+     *
+     * @var string
+     */
+    protected $resourceKey = null;
+    
+    /**
      * Turn this item object into a generic array.
      *
      * @param $item

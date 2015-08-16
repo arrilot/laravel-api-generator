@@ -71,6 +71,13 @@ abstract class BaseController extends LaravelController
     protected $maximumLimit = false;
 
     /**
+     * Resource key.
+     *
+     * @var string
+     */
+    protected $resourceKey = null;
+
+    /**
      * Constructor.
      *
      * @param Request $request
@@ -81,6 +88,8 @@ abstract class BaseController extends LaravelController
         $this->transformer = $this->transformer();
         $this->fractal = new Manager();
         $this->request = $request;
+
+        $this->fractal->setSerializer($this->serializer());
 
         if ($this->request->has('include')) {
             $this->fractal->parseIncludes(camel_case($this->request->input('include')));
@@ -102,6 +111,16 @@ abstract class BaseController extends LaravelController
     abstract protected function transformer();
 
     /**
+     * Serializer for the current model.
+     *
+     * @return \League\Fractal\Serializer\SerializerAbstract
+     */
+    protected function serializer()
+    {
+        return new Serializer();
+    }
+
+    /**
      * Display a listing of the resource.
      * GET /api/{resource}.
      *
@@ -109,6 +128,8 @@ abstract class BaseController extends LaravelController
      */
     public function index()
     {
+        $this->resourceKey = empty($this->resourceKey) ? 'data' : str_plural($this->resourceKey);
+
         $with = $this->getEagerLoad();
         $skip = (int) $this->request->input('skip', 0);
         $limit = $this->calculateLimit();
@@ -128,7 +149,10 @@ abstract class BaseController extends LaravelController
      */
     public function store()
     {
-        $data = $this->request->json()->get('data');
+        $key = empty($this->resourceKey) ? 'data' : str_singular($this->resourceKey);
+
+        $data = $this->request->json()->get($key);
+
         if (!$data) {
             return $this->errorWrongArgs('Empty data');
         }
@@ -175,7 +199,10 @@ abstract class BaseController extends LaravelController
      */
     public function update($id)
     {
-        $data = $this->request->json()->get('data');
+        $key = empty($this->resourceKey) ? 'data' : str_singular($this->resourceKey);
+
+        $data = $this->request->json()->get($key);
+
         if (!$data) {
             return $this->errorWrongArgs('Empty data');
         }
@@ -274,7 +301,7 @@ abstract class BaseController extends LaravelController
      */
     protected function respondWithItem($item)
     {
-        $resource = new Item($item, $this->transformer);
+        $resource = new Item($item, $this->transformer, $this->resourceKey);
 
         $rootScope = $this->prepareRootScope($resource);
 
@@ -292,7 +319,7 @@ abstract class BaseController extends LaravelController
      */
     protected function respondWithCollection($collection, $skip = 0, $limit = 0)
     {
-        $resource = new Collection($collection, $this->transformer);
+        $resource = new Collection($collection, $this->transformer, $this->resourceKey);
 
         if ($limit) {
             $cursor = new Cursor($skip, $skip + $limit, $collection->count());
