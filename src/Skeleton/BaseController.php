@@ -10,6 +10,7 @@ use League\Fractal\Manager;
 use League\Fractal\Pagination\Cursor;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
+use League\Fractal\Serializer\DataArraySerializer;
 
 abstract class BaseController extends LaravelController
 {
@@ -71,11 +72,18 @@ abstract class BaseController extends LaravelController
     protected $maximumLimit = false;
 
     /**
-     * Resource key.
+     * Resource key for an item.
      *
      * @var string
      */
-    protected $resourceKey = null;
+    protected $resourceKeySingular = 'data';
+
+    /**
+     * Resource key for a collection.
+     *
+     * @var string
+     */
+    protected $resourceKeyPlural = 'data';
 
     /**
      * Constructor.
@@ -86,10 +94,11 @@ abstract class BaseController extends LaravelController
     {
         $this->model = $this->model();
         $this->transformer = $this->transformer();
-        $this->fractal = new Manager();
-        $this->request = $request;
 
+        $this->fractal = new Manager();
         $this->fractal->setSerializer($this->serializer());
+
+        $this->request = $request;
 
         if ($this->request->has('include')) {
             $this->fractal->parseIncludes(camel_case($this->request->input('include')));
@@ -117,7 +126,7 @@ abstract class BaseController extends LaravelController
      */
     protected function serializer()
     {
-        return new Serializer();
+        return new DataArraySerializer();
     }
 
     /**
@@ -128,8 +137,6 @@ abstract class BaseController extends LaravelController
      */
     public function index()
     {
-        $this->resourceKey = empty($this->resourceKey) ? 'data' : str_plural($this->resourceKey);
-
         $with = $this->getEagerLoad();
         $skip = (int) $this->request->input('skip', 0);
         $limit = $this->calculateLimit();
@@ -149,9 +156,7 @@ abstract class BaseController extends LaravelController
      */
     public function store()
     {
-        $key = empty($this->resourceKey) ? 'data' : str_singular($this->resourceKey);
-
-        $data = $this->request->json()->get($key);
+        $data = $this->request->json()->get($this->resourceKeySingular);
 
         if (!$data) {
             return $this->errorWrongArgs('Empty data');
@@ -199,9 +204,7 @@ abstract class BaseController extends LaravelController
      */
     public function update($id)
     {
-        $key = empty($this->resourceKey) ? 'data' : str_singular($this->resourceKey);
-
-        $data = $this->request->json()->get($key);
+        $data = $this->request->json()->get($this->resourceKeySingular);
 
         if (!$data) {
             return $this->errorWrongArgs('Empty data');
@@ -301,7 +304,7 @@ abstract class BaseController extends LaravelController
      */
     protected function respondWithItem($item)
     {
-        $resource = new Item($item, $this->transformer, $this->resourceKey);
+        $resource = new Item($item, $this->transformer, $this->resourceKeySingular);
 
         $rootScope = $this->prepareRootScope($resource);
 
@@ -319,7 +322,7 @@ abstract class BaseController extends LaravelController
      */
     protected function respondWithCollection($collection, $skip = 0, $limit = 0)
     {
-        $resource = new Collection($collection, $this->transformer, $this->resourceKey);
+        $resource = new Collection($collection, $this->transformer, $this->resourceKeyPlural);
 
         if ($limit) {
             $cursor = new Cursor($skip, $skip + $limit, $collection->count());
