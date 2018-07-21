@@ -12,7 +12,7 @@
     "homepage": "https://github.com/Arrilot/laravel-api-generator",
     "require": {
         "php": ">=5.4.0",
-        "illuminate/support": "5.*",
+        "illuminate/support": ">=5.5",
         "league/fractal": "0.*"
     },
     "autoload": {
