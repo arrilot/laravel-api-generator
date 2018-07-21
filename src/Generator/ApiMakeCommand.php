@@ -2,14 +2,14 @@
 
 namespace Arrilot\Api\Generator;
 
-use Illuminate\Console\AppNamespaceDetectorTrait;
+use Illuminate\Console\DetectsApplicationNamespace;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Console\Input\InputArgument;
 
 class ApiMakeCommand extends Command
 {
-    use AppNamespaceDetectorTrait;
+    use DetectsApplicationNamespace;
 
     /**
      * The filesystem instance.
@@ -64,7 +64,7 @@ class ApiMakeCommand extends Command
      *
      * @return void
      */
-    public function fire()
+    public function handle()
     {
         $this->prepareVariablesForStubs($this->argument('name'));
 
