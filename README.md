@@ -2,7 +2,7 @@
 [![Scrutinizer Quality Score](https://img.shields.io/scrutinizer/g/Arrilot/laravel-api-generator/master.svg?style=flat)](https://scrutinizer-ci.com/g/Arrilot/laravel-api-generator/)
 [![MIT License](https://img.shields.io/packagist/l/Arrilot/laravel-api-generator.svg?style=flat)](https://packagist.org/packages/Arrilot/laravel-api-generator)
 
-# Laravel Api Generator
+# Laravel Api Generator (No longer supported)
 
 *Two simple tools for building REST APIs with fractal: console generator and API skeleton*
 
